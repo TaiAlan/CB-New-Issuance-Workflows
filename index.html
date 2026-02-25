@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CB New Issue Workflow Charts v1 — LLM Capability Assessment</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.0/mermaid.min.js"></script>
+  <style>
+    :root {
+      --primary: #1B3A5C;
+      --secondary: #2E75B6;
+      --bg: #F8FAFC;
+      --card: #FFFFFF;
+      --border: #E2E8F0;
+      --text: #334155;
+      --muted: #64748B;
+      --green: #2E7D32;
+      --green-light: #E8F5E9;
+      --green-border: #4CAF50;
+      --amber: #F57F17;
+      --amber-light: #FFF8E1;
+      --amber-border: #FF9800;
+      --red: #C62828;
+      --red-light: #FFEBEE;
+      --red-border: #F44336;
+      --grey: #6B7280;
+      --grey-light: #F3F4F6;
+      /* Team colours — 6 teams */
+      --pm-blue: #1565C0;
+      --pm-bg: #E3F2FD;
+      --quant-purple: #6A1B9A;
+      --quant-bg: #F3E5F5;
+      --credit-teal: #00695C;
+      --credit-bg: #E0F2F1;
+      --equity-indigo: #283593;
+      --equity-bg: #E8EAF6;
+      --legal-brown: #4E342E;
+      --legal-bg: #EFEBE9;
+      --exec-slate: #37474F;
+      --exec-bg: #ECEFF1;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .header {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      padding: 2rem 2rem 1rem;
+      text-align: center;
+    }
+    .header h1 { font-size: 1.75rem; font-weight: 700; margin-bottom: 0.25rem; }
+    .header p { opacity: 0.85; font-size: 0.95rem; }
+    .header .subtitle { font-size: 1.1rem; opacity: 0.9; margin-bottom: 0.5rem; }
+    .header .version-badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.4);
+      border-radius: 20px;
+      padding: 0.2rem 0.8rem;
+      font-size: 0.8rem;
+      margin-bottom: 0.5rem;
+    }
+
+    /* G/A/R percentage bar in header */
+    .gar-bar {
+      display: flex;
+      justify-content: center;
+      gap: 0;
+      margin: 0.75rem auto 0.25rem;
+      max-width: 500px;
+      border-radius: 8px;
+      overflow: hidden;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    .gar-bar .gar-seg {
+      padding: 0.4rem 0.6rem;
+      text-align: center;
+      color: white;
+    }
+    .gar-bar .gar-green { background: var(--green); flex: 43; }
+    .gar-bar .gar-amber { background: var(--amber); flex: 44; color: #1a1a1a; }
+    .gar-bar .gar-red { background: var(--red); flex: 13; }
+
+    .nav-container {
+      background: white;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .nav-tabs {
+      display: flex;
+      max-width: 1400px;
+      margin: 0 auto;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+    }
+    .nav-tab {
+      padding: 0.75rem 1.25rem;
+      cursor: pointer;
+      border: none;
+      background: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--muted);
+      white-space: nowrap;
+      border-bottom: 3px solid transparent;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    .nav-tab:hover { color: var(--primary); background: #f1f5f9; }
+    .nav-tab.active { color: var(--primary); border-bottom-color: var(--secondary); font-weight: 600; }
+
+    .content { max-width: 1400px; margin: 0 auto; padding: 1.5rem; }
+    .chart-section { display: none; }
+    .chart-section.active { display: block; }
+
+    .section-header {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .section-header h2 { font-size: 1.35rem; color: var(--primary); margin-bottom: 0.5rem; }
+    .section-header p { color: var(--muted); font-size: 0.9rem; }
+
+    .chart-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      overflow-x: auto;
+    }
+    .chart-card h3 {
+      font-size: 1.1rem;
+      color: var(--primary);
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--border);
+    }
+
+    /* LLM Capability Legend */
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.25rem;
+      padding: 1rem 1.5rem;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      align-items: center;
+    }
+    .legend-title {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--primary);
+      margin-right: 0.5rem;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      color: var(--text);
+      font-weight: 500;
+    }
+    .legend-color {
+      width: 20px;
+      height: 20px;
+      border-radius: 4px;
+      border: 2px solid;
+    }
+    .legend-color.green { background: var(--green-light); border-color: var(--green-border); }
+    .legend-color.amber { background: var(--amber-light); border-color: var(--amber-border); }
+    .legend-color.red { background: var(--red-light); border-color: var(--red-border); }
+    .legend-color.diamond {
+      background: var(--grey-light);
+      border-color: var(--grey);
+      transform: rotate(45deg);
+      width: 16px;
+      height: 16px;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .info-box {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      border-left: 4px solid var(--secondary);
+    }
+    .info-box.green-stat { border-left-color: var(--green); }
+    .info-box.amber-stat { border-left-color: var(--amber); }
+    .info-box.red-stat { border-left-color: var(--red); }
+    .info-box h4 { font-size: 0.8rem; color: var(--muted); margin-bottom: 0.25rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .info-box .value { font-size: 1.4rem; font-weight: 700; color: var(--primary); }
+    .info-box .detail { font-size: 0.8rem; color: var(--muted); margin-top: 0.15rem; }
+
+    .mermaid { text-align: center; }
+    .mermaid svg { max-width: 100%; height: auto; }
+
+    .footer {
+      text-align: center;
+      padding: 2rem;
+      color: var(--muted);
+      font-size: 0.8rem;
+      border-top: 1px solid var(--border);
+      margin-top: 2rem;
+    }
+
+    /* Team badges */
+    .team-badge {
+      display: inline-block;
+      padding: 0.15rem 0.6rem;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-left: 0.5rem;
+      vertical-align: middle;
+    }
+    .team-badge.pm { background: var(--pm-bg); color: var(--pm-blue); }
+    .team-badge.quant { background: var(--quant-bg); color: var(--quant-purple); }
+    .team-badge.credit { background: var(--credit-bg); color: var(--credit-teal); }
+    .team-badge.equity { background: var(--equity-bg); color: var(--equity-indigo); }
+    .team-badge.legal { background: var(--legal-bg); color: var(--legal-brown); }
+    .team-badge.exec { background: var(--exec-bg); color: var(--exec-slate); }
+
+    /* Summary table */
+    .summary-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      margin-top: 1rem;
+    }
+    .summary-table th {
+      background: var(--primary);
+      color: white;
+      padding: 0.6rem 0.8rem;
+      text-align: left;
+      font-weight: 600;
+    }
+    .summary-table td {
+      padding: 0.5rem 0.8rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .summary-table tr:nth-child(even) { background: #F5F7FA; }
+    .summary-table .llm-green { color: var(--green); font-weight: 600; }
+    .summary-table .llm-amber { color: #E65100; font-weight: 600; }
+    .summary-table .llm-red { color: var(--red); font-weight: 600; }
+
+    @media print {
+      .nav-container { display: none; }
+      .chart-section { display: block !important; page-break-before: always; }
+      .header { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+    }
+
+    @media (max-width: 768px) {
+      .header h1 { font-size: 1.3rem; }
+      .nav-tab { padding: 0.6rem 0.9rem; font-size: 0.8rem; }
+      .content { padding: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div class="version-badge">v1.0 — Aligned with Build Guide v1</div>
+  <h1>CB New Issue Workflow Charts</h1>
+  <div class="subtitle">63 Steps &bull; 11 Phases &bull; 6 Teams &bull; 14 Handoffs &bull; 11 Decision Gates</div>
+  <div class="gar-bar">
+    <div class="gar-seg gar-green">Autonomous 43%</div>
+    <div class="gar-seg gar-amber">Assisted 44%</div>
+    <div class="gar-seg gar-red">Manual 13%</div>
+  </div>
+  <p style="margin-top:0.4rem;">Green = Autonomous (27 steps) &bull; Amber = Assisted (28 steps) &bull; Red = Manual (8 steps) &bull; February 2026</p>
+</div>
+
+<div class="nav-container">
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showTab('overall')">Master Workflow</button>
+    <button class="nav-tab" onclick="showTab('pm-trading')">PM / Trading</button>
+    <button class="nav-tab" onclick="showTab('quant')">Quant Analysis</button>
+    <button class="nav-tab" onclick="showTab('credit')">Credit Analysis</button>
+    <button class="nav-tab" onclick="showTab('equity')">Equity Research</button>
+    <button class="nav-tab" onclick="showTab('legal')">Legal / Compliance</button>
+    <button class="nav-tab" onclick="showTab('exec')">Execution / PB</button>
+    <button class="nav-tab" onclick="showTab('summary')">Capability Summary</button>
+  </div>
+</div>
+
+<div class="content">
+
+  <!-- ==================== MASTER WORKFLOW ==================== -->
+  <div class="chart-section active" id="overall">
+    <div class="section-header">
+      <h2>Master Build Sequence — LLM Capability Overlay</h2>
+      <p>Each phase is colour-coded by the predominant LLM capability level. Diamonds represent decision gates that require human judgment or quantitative threshold sign-off. 63 steps across 11 phases (0–10), 11 gates, 14 cross-team handoffs. Phases 0–2 are sequential (foundation). Phases 3–7 run in parallel. Phases 8–10 are integrative.</p>
+    </div>
+
+    <div class="legend">
+      <span class="legend-title">Legend:</span>
+      <div class="legend-item"><div class="legend-color green"></div>Autonomous (LLM end-to-end)</div>
+      <div class="legend-item"><div class="legend-color amber"></div>Assisted (LLM + human review)</div>
+      <div class="legend-item"><div class="legend-color red"></div>Manual (human required)</div>
+      <div class="legend-item"><div class="legend-color diamond"></div>Gate / Checkpoint</div>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-box green-stat">
+        <h4>Autonomous</h4>
+        <div class="value">27 steps (43%)</div>
+        <div class="detail">Signal scanning, term extraction, screening, bond floor, Greeks, borrow data, credit comps</div>
+      </div>
+      <div class="info-box amber-stat">
+        <h4>Assisted</h4>
+        <div class="value">28 steps (44%)</div>
+        <div class="detail">Structure classification, legal review, T-F calibration, credit opinion, convergence, IC memo</div>
+      </div>
+      <div class="info-box red-stat">
+        <h4>Manual</h4>
+        <div class="value">8 steps (13%)</div>
+        <div class="detail">Watchlist priority, PB locate calls, convergence call, IC vote, hedge execution, settlement</div>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <h3>Master Build Sequence with LLM Capability Assessment</h3>
+      <div class="mermaid">
+graph TD
+    START(["Signal Detected / Term Sheet Received"]):::greenNode --> P0
+
+    subgraph FOUNDATION ["FOUNDATION PHASES (Sequential)"]
+        direction TB
+        P0["Phase 0: Pre-Launch Intelligence<br/><b>3 Auto / 1 Asst / 1 Manual</b><br/>PM Trading — Day -7 to 0"]:::greenNode
+        P0 --> G0{"Gate 0: Watchlist<br/>assigned? Team<br/>pre-allocated?"}:::decisionNode
+        G0 -->|Yes| P1["Phase 1: Term Sheet & Classification<br/><b>3 Auto / 2 Asst</b><br/>PM Trading — Day 0-1"]:::greenNode
+        P1 --> G1{"Gate 1: Terms<br/>extracted? Structure<br/>classified?"}:::decisionNode
+        G1 -->|Yes| P2["Phase 2: Initial Screen & Gate #1<br/><b>2 Auto / 1 Asst</b><br/>PM Trading — Day 0-1"]:::greenNode
+        P2 --> G2{"HARD GATE: Min size?<br/>Cheapness? Borrow?<br/>PASS / FAIL"}:::decisionNode
+    end
+
+    subgraph PARALLEL ["PARALLEL PHASES (Concurrent after Gate #1)"]
+        direction TB
+        P3["Phase 3: Prospectus & Legal<br/><b>3 Auto / 4 Asst</b><br/>Legal — Days 1-5"]:::amberNode
+        P4["Phase 4: Valuation & Arb Model<br/><b>5 Auto / 3 Asst</b><br/>Quant — Days 1-5"]:::greenNode
+        P5["Phase 5: Borrow & Hedging<br/><b>4 Auto / 1 Asst / 1 Man</b><br/>Execution — Days 1-3"]:::amberNode
+        P6["Phase 6: Credit Assessment<br/><b>3 Auto / 2 Asst</b><br/>Credit — Days 3-7"]:::greenNode
+        P7["Phase 7: Equity & Vol<br/><b>2 Auto / 3 Asst</b><br/>Equity — Days 3-7"]:::amberNode
+    end
+
+    G2 -->|Pass| P3
+    G2 -->|Pass| P4
+    G2 -->|Pass| P5
+    G2 -->|Pass| P6
+    G2 -->|Pass| P7
+
+    P3 --> G3{"Gate 3: Prospectus<br/>parsed? Legal risk<br/>memo done?"}:::decisionNode
+    P4 --> G4{"Gate 4: TV calculated?<br/>Greeks? Arb spread<br/>positive?"}:::decisionNode
+    P5 --> G5{"Gate 5: Borrow<br/>confirmed? All-in<br/>cost calculated?"}:::decisionNode
+    P6 --> G6{"Gate 6: Credit<br/>opinion done?<br/>No default red flag?"}:::decisionNode
+    P7 --> G7{"Gate 7: Equity view<br/>formed? Vol outlook<br/>assessed?"}:::decisionNode
+
+    subgraph INTEGRATION ["INTEGRATION PHASES (Sequential)"]
+        direction TB
+        P8["Phase 8: Convergence & Synthesis<br/><b>1 Auto / 2 Asst / 1 Man</b><br/>PM Trading — Days 7-9"]:::amberNode
+        P8 --> G8{"Gate 8: All dimensions<br/>converge? Deal<br/>conviction set?"}:::decisionNode
+        G8 -->|Yes| P9["Phase 9: Sizing, Risk & IC Memo<br/><b>1 Auto / 5 Asst / 2 Man</b><br/>PM+Quant — Days 7-12"]:::redNode
+        P9 --> G9{"Gate 9: IC vote<br/>APPROVE / REJECT<br/>/ CONDITIONAL"}:::decisionNode
+        G9 -->|Approved| P10["Phase 10: Execution & Post-Trade<br/><b>0 Auto / 4 Asst / 3 Man</b><br/>Execution — Days 10-14"]:::redNode
+        P10 --> G10{"Gate 10: Settled?<br/>Monitoring active?<br/>Doc archived?"}:::decisionNode
+    end
+
+    G3 -->|Yes| P8
+    G4 -->|Yes| P8
+    G5 -->|Yes| P8
+    G6 -->|Yes| P8
+    G7 -->|Yes| P8
+
+    G10 -->|Complete| DONE(["POSITION LIVE<br/>Monitoring Active"]):::greenNode
+
+    classDef greenNode fill:#E8F5E9,stroke:#4CAF50,color:#1B5E20,stroke-width:2px
+    classDef amberNode fill:#FFF8E1,stroke:#FF9800,color:#E65100,stroke-width:2px
+    classDef redNode fill:#FFEBEE,stroke:#F44336,color:#B71C1C,stroke-width:2px
+    classDef decisionNode fill:#F3F4F6,stroke:#6B7280,color:#374151,stroke-width:2px
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== PM / TRADING ==================== -->
+  <div class="chart-section" id="pm-trading">
+    <div class="section-header">
+      <h2>PM / Trading Desk <span class="team-badge pm">Phases 0, 1, 2, 8, 9</span></h2>
+      <p>Core orchestration team owning 17 steps directly plus 8 joint steps with Quant (Phase 9). Phases 0–2 are mostly autonomous (signal scanning, term extraction, screening). Phase 8 convergence requires PM judgment. Phase 9 IC memo is the most human-intensive phase.</p>
+    </div>
+
+    <div class="legend">
+      <span class="legend-title">Legend:</span>
+      <div class="legend-item"><div class="legend-color green"></div>Autonomous</div>
+      <div class="legend-item"><div class="legend-color amber"></div>Assisted</div>
+      <div class="legend-item"><div class="legend-color red"></div>Manual</div>
+      <div class="legend-item"><div class="legend-color diamond"></div>Gate</div>
+    </div>
+
+    <div class="chart-card">
+      <h3>Phase 0: Pre-Launch Intelligence &amp; Scanning (5 steps — 3 Auto / 1 Asst / 1 Manual)</h3>
+      <div class="mermaid">
+graph TB
+    subgraph P0 ["Phase 0: Pre-Launch Intelligence — PM/Trading — Day -7 to 0"]
+        direction TB
+
+        S01["Step 0.1<br/>Daily signal monitoring<br/>& scanning"]:::greenNode
+        S02["Step 0.2<br/>Preliminary credit &<br/>equity pre-screen"]:::greenNode
+        S03["Step 0.3<br/>Equity borrow pre-check<br/>(PB API queries)"]:::greenNode
+        S04["Step 0.4<br/>Skeleton model on<br/>leaked/estimated terms"]:::amberNode
+        S05["Step 0.5<br/>Prioritize & assign<br/>to watchlist"]:::redNode
+
+        S01 --> S02
+        S01 --> S03
+        S02 --> S04
+        S03 --> S04
+        S04 --> S05
+        S05 --> OUT0(["Output: Ranked Watchlist<br/>Skeleton Analysis, Team Alert"]):::greenNode
+    end
+
+    classDef greenNode fill:#E8F5E9,stroke:#4CAF50,color:#1B5E20,stroke-width:2px
+    classDef amberNode fill:#FFF8E1,stroke:#FF9800,color:#E65100,stroke-width:2px
+    classDef redNode fill:#FFEBEE,stroke:#F44336,color:#B71C1C,stroke-width:2px
+    classDef decisionNode fill:#F3F4F6,stroke:#6B7280,color:#374151,stroke-width:2px
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <h3>Phase 1: Term Sheet Extraction &amp; Structure Classification (5 steps — 3 Auto / 2 Asst)</h3>
+      <div class="mermaid">
+graph TB
+    subgraph P1 ["Phase 1: Term Sheet & Classification — PM/Trading — Day 0-1"]
+        direction TB
+
+        S11["Step 1.1<br/>Extract full terms<br/>from term sheet"]:::greenNode
+        S12["Step 1.2<br/>Cross-reference vs<br/>Phase 0 intelligence"]:::greenNode
+        S13["Step 1.3<br/>Classify structure type<br/>& route modeling branch"]:::amberNode
+        S14["Step 1.4<br/>Compile comparable<br/>recent issuance"]:::greenNode
+        S15["Step 1.5<br/>Draft terms summary table"]:::amberNode
+
+        S11 --> S12
+        S11 --> S13
+        S11 --> S14
+        S12 --> S15
+        S13 --> S15
+        S14 --> S15
+        S15 --> OUT1(["Output: Structured Term Sheet<br/>Structure Classification<br/>Comparables Table"]):::greenNode
+    end
+
+    classDef greenNode fill:#E8F5E9,stroke:#4CAF50,color:#1B5E20,stroke-width:2px
+    classDef amberNode fill:#FFF8E1,stroke:#FF9800,color:#E65100,stroke-width:2px
+    classDef redNode fill:#FFEBEE,stroke:#F44336,color:#B71C1C,stroke-width:2px
+    classDef decisionNode fill:#F3F4F6,stroke:#6B7280,color:#374151,stroke-width:2px
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <h3>Phase 2: Initial Screen &amp; Gate #1 (3 steps — 2 Auto / 1 Asst)</h3>
+      <div class="mermaid">
+graph TB
+    subgraph P2 ["Phase 2: Initial Screen & Gate #1 — PM/Trading — Day 0-1"]
+        direction TB
+
+        DEP["Input: Phase 1 complete<br/>Term sheet extracted"]:::greenNode
+
+        S21["Step 2.1<br/>Apply hard rejection filters<br/>(size, rating, liquidity)"]:::greenNode
+        S22["Step 2.2<br/>Apply yellow flag filters<br/>(borrow, structure, vol)"]:::greenNode
+        D22{"HARD GATE<br/>Pass / Fail?"}:::decisionNode
+        S23["Step 2.3<br/>Draft screening memo<br/>(1 page)"]:::amberNode
+
+        DEP --> S21
+        DEP --> S22
+        S21 --> D22
+        S22 --> D22
+        D22 -->|Pass| S23
+        D22 -->|Fail| KILL(["DEAL KILLED<br/>Archive & Log"]):::redNode
+        S23 --> OUT2(["Output: Screening Memo<br/>GO for Parallel Phases"]):::greenNode
+    end
+
+    classDef greenNode fill:#E8F5E9,stroke:#4CAF50,color:#1B5E20,stroke-width:2px
+    classDef amberNode fill:#FFF8E1,stroke:#FF9800,color:#E65100,stroke-width:2px
+    classDef redNode fill:#FFEBEE,stroke:#F44336,color:#B71C1C,stroke-width:2px
+    classDef decisionNode fill:#F3F4F6,stroke:#6B7280,color:#374151,stroke-width:2px
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <h3>Phase 8: Convergence &amp; Synthesis (4 steps — 1 Auto / 2 Asst / 1 Manual)</h3>
+      <div class="mermaid">
+graph TB
+    subgraph P8 ["Phase 8: Convergence & Synthesis — PM/Trading — Days 7-9"]
+        direction TB
+
+        DEP1["Phase 3: Legal risk memo"]:::amberNode
+        DEP2["Phase 4: Valuation workbook"]:::greenNode
+        DEP3["Phase 5: Execution feasibility"]:::amberNode
+        DEP4["Phase 6: Credit opinion"]:::amberNode
+        DEP5["Phase 7: Equity & vol opinion"]:::amberNode
+
+        S81["Step 8.1<br/>Compile all workstream<br/>outputs"]:::greenNode
+        S82["Step 8.2<br/>Build convergence<br/>decision matrix"]:::amberNode
+        S83["Step 8.3<br/>Apply decision rules<br/>(mixed-signal resolution)"]:::amberNode
+        S84["Step 8.4<br/>Draft convergence section<br/>(deal conviction call)"]:::redNode
+
+        DEP1 --> S81
+        DEP2 --> S81
+        DEP3 --> S81
+        DEP4 --> S81
+        DEP5 --> S81
+        S81 --> S82
+        S82 --> S83
+        S83 --> S84
+        S84 --> OUT8(["Output: Convergence Matrix<br/>Deal Conviction Level<br/>GO / NO-GO / CONDITIONAL"]):::amberNode
+    end
+
+    classDef greenNode fill:#E8F5E9,stroke:#4CAF50,color:#1B5E20,stroke-width:2px
+    classDef amberNode fill:#FFF8E1,stroke:#FF9800,color:#E65100,stroke-width:2px
+    classDef redNode fill:#FFEBEE,stroke:#F44336,color:#B71C1C,stroke-width:2px
+    classDef decisionNode fill:#F3F4F6,stroke:#6B7280,color:#374151,stroke-width:2px
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <h3>Phase 9: Sizing, Risk &amp; IC Memo (8 steps — 1 Auto / 5 Asst / 2 Manual) <span class="team-badge pm">PM</span> <span class="team-badge quant">+ Quant</span></h3>
+      <div class="mermaid">
+graph TB
+    subgraph P9 ["Phase 9: Sizing, Risk & IC Memo — PM + Quant Joint — Days 7-12"]
+        direction TB
+
+        DEP["Phase 8: Convergence<br/>approved"]:::amberNode
+
+        S91["Step 9.1<br/>Calculate expected return<br/>& target notional"]:::amberNode
+        S92["Step 9.2<br/>Design hedge plan<br/>(rebalancing strategy)"]:::amberNode
+        S93["Step 9.3<br/>Build scenario P&L table"]:::greenNode
+        S94["Step 9.4<br/>Assess tail risk &<br/>VaR contribution"]:::amberNode
+        S95["Step 9.5<br/>Compile IC memo<br/>quick-reference block"]:::amberNode
+        S96["Step 9.6<br/>Draft full IC memo<br/>sections 1-10"]:::amberNode
+        S97["Step 9.7<br/>Draft recommendation<br/>& conditions"]:::redNode
+        D97{"PM/CIO<br/>sign-off on<br/>recommendation?"}:::decisionNode
+        S98["Step 9.8<br/>IC presentation & vote"]:::redNode
+
+        DEP --> S91
+        DEP --> S92
+        S91 --> S93
+        S92 --> S93
+        S93 --> S94
+        S94 --> S95
+        S95 --> S96
+        S96 --> S97
+        S97 --> D97
+        D97 -->|Approved| S98
+        S98 --> OUT9(["Output: IC Memo Complete<br/>Approved Position Size<br/>Hedge Parameters"]):::redNode
+    end
+
+    classDef greenNode fill:#E8F5E9,stroke:#4CAF50,color:#1B5E20,stroke-width:2px
+    classDef amberNode fill:#FFF8E1,stroke:#FF9800,color:#E65100,stroke-width:2px
+    classDef redNode fill:#FFEBEE,stroke:#F44336,color:#B71C1C,stroke-width:2px
+    classDef decisionNode fill:#F3F4F6,stroke:#6B7280,color:#374151,stroke-width:2px
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== QUANT ANALYSIS ==================== -->
+  <div class="chart-section" id="quant">
+    <div class="section-header">
+      <h2>Quantitative Analysis <span class="team-badge quant">Phase 4</span></h2>
+      <p>Phase 4 is the most automatable analytical phase (5 of 8 steps autonomous). Bond floor, Greeks, Black-Scholes check, and sensitivity heatmaps are fully autonomous. T-F tree calibration and workbook compilation are assisted. Also contributes jointly to Phase 9.</p>
+    </div>
+
+    <div class="legend">
+      <span class="legend-title">Legend:</span>
+      <div class="legend-item"><div class="legend-color green"></div>Autonomous</div>
+      <div class="legend-item"><div class="legend-color amber"></div>Assisted</div>
+      <div class="legend-item"><div class="legend-color red"></div>Manual</div>
+      <div class="legend-item"><div class="legend-color diamond"></div>Gate</div>
+    </div>
+
+    <div class="chart-card">
+      <h3>Phase 4: Valuation &amp; Arb Modeling (8 steps — 5 Auto / 3 Asst)</h3>
+      <div class="mermaid">
+graph TB
+    subgraph P4 ["Phase 4: Valuation & Arb Modeling — Quant Analysis — Days 1-5"]
+        direction TB
+
+        DEP1["Phase 2: Screening passed"]:::greenNode
+        DEP2["Phase 3.5: Modeling implications<br/>from Legal"]:::amberNode
+        DEP3["Phase 5.1: Borrow rate<br/>from Execution"]:::greenNode
+
+        S41["Step 4.1<br/>Gather & validate<br/>market data inputs"]:::greenNode
+        S42["Step 4.2<br/>Calculate bond floor<br/>(credit-only value)"]:::greenNode
+        S43["Step 4.3<br/>Build T-F binomial/<br/>trinomial tree (1000-step)"]:::amberNode
+        S44["Step 4.4<br/>Compute Greeks via<br/>central differencing"]:::greenNode
+        S45["Step 4.5<br/>Black-Scholes<br/>sanity check"]:::greenNode
+        D45{"TV within 2pts<br/>of B-S? If not,<br/>justify deviation"}:::decisionNode
+        S46["Step 4.6<br/>Determine theoretical<br/>value & arb spread"]:::greenNode
+        S47["Step 4.7<br/>Build 5x5 sensitivity<br/>heatmaps"]:::greenNode
+        S48["Step 4.8<br/>Compile valuation<br/>model workbook"]:::amberNode
+
+        DEP1 --> S41
+        DEP2 --> S43
+        DEP3 --> S43
+        S41 --> S42
+        S41 --> S43
+        S42 --> S43
+        S43 --> S44
+        S43 --> S45
+        S44 --> S46
+        S45 --> D45
+        D45 -->|OK| S46
+        S46 --> S47
+        S47 --> S48
+        S48 --> OUT4(["Output: TV, Greeks, Arb Spread<br/>5x5 Heatmaps, Model Workbook"]):::greenNode
+    end
+
+    classDef greenNode fill:#E8F5E9,stroke:#4CAF50,color:#1B5E20,stroke-width:2px
+    classDef amberNode fill:#FFF8E1,stroke:#FF9800,color:#E65100,stroke-width:2px
+    classDef redNode fill:#FFEBEE,stroke:#F44336,color:#B71C1C,stroke-width:2px
+    classDef decisionNode fill:#F3F4F6,stroke:#6B7280,color:#374151,stroke-width:2px
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== CREDIT ANALYSIS ==================== -->
+  <div class="chart-section" id="credit">
+    <div class="section-header">
+      <h2>Credit Analysis <span class="team-badge credit">Phase 6</span></h2>
+      <p>Phase 6 has 5 steps: 3 autonomous (financial profile compilation, comparable credit analysis, interaction assessment) and 2 assisted (default/recovery estimation, credit opinion drafting). No manual steps — but senior credit judgment is needed for PD calibration and opinion.</p>
+    </div>
+
+    <div class="legend">
+      <span class="legend-title">Legend:</span>
+      <div class="legend-item"><div class="legend-color green"></div>Autonomous</div>
+      <div class="legend-item"><div class="legend-color amber"></div>Assisted</div>
+      <div class="legend-item"><div class="legend-color red"></div>Manual</div>
+      <div class="legend-item"><div class="legend-color diamond"></div>Gate</div>
+    </div>
+
+    <div class="chart-card">
+      <h3>Phase 6: Credit Assessment (5 steps — 3 Auto / 2 Asst)</h3>
+      <div class="mermaid">
+graph TB
+    subgraph P6 ["Phase 6: Credit Assessment — Credit Analysis — Days 3-7"]
+        direction TB
+
+        DEP1["Phase 2: Screening passed"]:::greenNode
+        DEP2["Issuer financials &<br/>filings available"]:::greenNode
+
+        S61["Step 6.1<br/>Compile issuer<br/>financial profile"]:::greenNode
+        S62["Step 6.2<br/>Comparable company<br/>credit analysis"]:::greenNode
+        S63["Step 6.3<br/>Assess default probability<br/>& recovery"]:::amberNode
+        D63{"Default risk<br/>within acceptable<br/>tolerance?"}:::decisionNode
+        S64["Step 6.4<br/>Evaluate credit interaction<br/>with arb economics"]:::amberNode
+        S65["Step 6.5<br/>Draft credit opinion<br/>(1 page)"]:::amberNode
+
+        DEP1 --> S61
+        DEP2 --> S61
+        S61 --> S62
+        S62 --> S63
+        S63 --> D63
+        D63 -->|Yes| S64
+        S64 --> S65
+        S65 --> OUT6(["Output: Credit Opinion<br/>PD/Recovery Estimates<br/>Spread Input for Model"]):::amberNode
+    end
+
+    classDef greenNode fill:#E8F5E9,stroke:#4CAF50,color:#1B5E20,stroke-width:2px
+    classDef amberNode fill:#FFF8E1,stroke:#FF9800,color:#E65100,stroke-width:2px
+    classDef redNode fill:#FFEBEE,stroke:#F44336,color:#B71C1C,stroke-width:2px
+    classDef decisionNode fill:#F3F4F6,stroke:#6B7280,color:#374151,stroke-width:2px
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== EQUITY RESEARCH ==================== -->
+  <div class="chart-section" id="equity">
+    <div class="section-header">
+      <h2>Equity Research <span class="team-badge equity">Phase 7</span></h2>
+      <p>Phase 7 has 5 steps: 2 autonomous (fundamental valuation, parity path quantitative work) and 3 assisted (volatility analysis, catalyst calendar, equity opinion synthesis). Requires sector expertise and vol trading experience for meaningful output.</p>
+    </div>
+
+    <div class="legend">
+      <span class="legend-title">Legend:</span>
+      <div class="legend-item"><div class="legend-color green"></div>Autonomous</div>
+      <div class="legend-item"><div class="legend-color amber"></div>Assisted</div>
+      <div class="legend-item"><div class="legend-color red"></div>Manual</div>
+      <div class="legend-item"><div class="legend-color diamond"></div>Gate</div>
+    </div>
+
+    <div class="chart-card">
+      <h3>Phase 7: Equity &amp; Volatility Assessment (5 steps — 2 Auto / 3 Asst)</h3>
+      <div class="mermaid">
+graph TB
+    subgraph P7 ["Phase 7: Equity & Vol Assessment — Equity Research — Days 3-7"]
+        direction TB
+
+        DEP["Phase 2: Screening passed<br/>Equity data available"]:::greenNode
+
+        S71["Step 7.1<br/>Fundamental equity<br/>valuation"]:::greenNode
+        S72["Step 7.2<br/>Volatility analysis<br/>(IV vs RV, term structure)"]:::amberNode
+        S73["Step 7.3<br/>Catalyst calendar<br/>& event risk"]:::amberNode
+        S74["Step 7.4<br/>Parity path assessment<br/>(stock trajectory vs CP)"]:::amberNode
+        D74{"Equity view<br/>supports arb<br/>thesis?"}:::decisionNode
+        S75["Step 7.5<br/>Draft equity & vol<br/>opinion (1 page)"]:::amberNode
+
+        DEP --> S71
+        DEP --> S72
+        DEP --> S73
+        S71 --> S74
+        S72 --> S74
+        S73 --> S74
+        S74 --> D74
+        D74 -->|Yes| S75
+        S75 --> OUT7(["Output: Equity Opinion<br/>Vol Outlook, Catalyst Calendar<br/>Parity Path View"]):::amberNode
+    end
+
+    classDef greenNode fill:#E8F5E9,stroke:#4CAF50,color:#1B5E20,stroke-width:2px
+    classDef amberNode fill:#FFF8E1,stroke:#FF9800,color:#E65100,stroke-width:2px
+    classDef redNode fill:#FFEBEE,stroke:#F44336,color:#B71C1C,stroke-width:2px
+    classDef decisionNode fill:#F3F4F6,stroke:#6B7280,color:#374151,stroke-width:2px
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== LEGAL / COMPLIANCE ==================== -->
+  <div class="chart-section" id="legal">
+    <div class="section-header">
+      <h2>Legal / Compliance <span class="team-badge legal">Phase 3</span></h2>
+      <p>Phase 3 has 7 steps: 3 autonomous (prospectus RAG ingest, conversion mechanics extraction, anti-dilution/call/put extraction) and 4 assisted (covenant interpretation, modeling implications, market standard comparison, legal risk memo). Critical handoff to Quant at Step 3.5 for modeling parameters.</p>
+    </div>
+
+    <div class="legend">
+      <span class="legend-title">Legend:</span>
+      <div class="legend-item"><div class="legend-color green"></div>Autonomous</div>
+      <div class="legend-item"><div class="legend-color amber"></div>Assisted</div>
+      <div class="legend-item"><div class="legend-color red"></div>Manual</div>
+      <div class="legend-item"><div class="legend-color diamond"></div>Gate</div>
+    </div>
+
+    <div class="chart-card">
+      <h3>Phase 3: Prospectus &amp; Legal Review (7 steps — 3 Auto / 4 Asst)</h3>
+      <div class="mermaid">
+graph TB
+    subgraph P3 ["Phase 3: Prospectus & Legal Review — Legal/Compliance — Days 1-5"]
+        direction TB
+
+        DEP["Phase 2: Screening passed<br/>Prospectus received"]:::greenNode
+
+        S31["Step 3.1<br/>Ingest full prospectus<br/>via RAG"]:::greenNode
+        S32["Step 3.2<br/>Extract & analyze<br/>conversion mechanics"]:::greenNode
+        S33["Step 3.3<br/>Extract anti-dilution,<br/>call/put provisions"]:::greenNode
+        S34["Step 3.4<br/>Extract covenants,<br/>events of default"]:::amberNode
+        S35["Step 3.5<br/>Identify all modeling<br/>implications"]:::amberNode
+        HO35(["HANDOFF to Quant<br/>Modeling parameters"]):::greenNode
+        S36["Step 3.6<br/>Compare to market<br/>standard language"]:::amberNode
+        S37["Step 3.7<br/>Draft legal risk memo<br/>(2-3 pages, R/Y/G flags)"]:::amberNode
+
+        DEP --> S31
+        S31 --> S32
+        S31 --> S33
+        S31 --> S34
+        S32 --> S35
+        S33 --> S35
+        S34 --> S35
+        S35 --> HO35
+        S34 --> S36
+        S36 --> S37
+        S35 --> S37
+        S37 --> OUT3(["Output: Legal Risk Memo<br/>R/Y/G Flags<br/>Modeling Parameters"]):::amberNode
+    end
+
+    classDef greenNode fill:#E8F5E9,stroke:#4CAF50,color:#1B5E20,stroke-width:2px
+    classDef amberNode fill:#FFF8E1,stroke:#FF9800,color:#E65100,stroke-width:2px
+    classDef redNode fill:#FFEBEE,stroke:#F44336,color:#B71C1C,stroke-width:2px
+    classDef decisionNode fill:#F3F4F6,stroke:#6B7280,color:#374151,stroke-width:2px
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== EXECUTION / PB ==================== -->
+  <div class="chart-section" id="exec">
+    <div class="section-header">
+      <h2>Execution / Prime Brokerage <span class="team-badge exec">Phases 5, 10</span></h2>
+      <p>Phase 5 includes the only hard-veto step in the parallel block: if borrow cannot be located, the trade is infeasible. Phase 10 is the most manual-intensive phase (3 of 7 manual) — bookrunner negotiation, hedge execution, and settlement all require real-time human engagement.</p>
+    </div>
+
+    <div class="legend">
+      <span class="legend-title">Legend:</span>
+      <div class="legend-item"><div class="legend-color green"></div>Autonomous</div>
+      <div class="legend-item"><div class="legend-color amber"></div>Assisted</div>
+      <div class="legend-item"><div class="legend-color red"></div>Manual</div>
+      <div class="legend-item"><div class="legend-color diamond"></div>Gate</div>
+    </div>
+
+    <div class="chart-card">
+      <h3>Phase 5: Borrow &amp; Hedging (6 steps — 4 Auto / 1 Asst / 1 Manual)</h3>
+      <div class="mermaid">
+graph TB
+    subgraph P5 ["Phase 5: Borrow & Hedging — Execution/PB — Days 1-3"]
+        direction TB
+
+        DEP["Phase 2: Screening passed"]:::greenNode
+
+        S51["Step 5.1<br/>Submit simultaneous<br/>multi-prime locate requests"]:::redNode
+        HO51(["HANDOFF to Quant<br/>Borrow rate for model"]):::greenNode
+        S52["Step 5.2<br/>Analyze historical<br/>borrow & recall data"]:::greenNode
+        S53["Step 5.3<br/>Assess equity liquidity<br/>& options market depth"]:::greenNode
+        S54["Step 5.4<br/>Assess CB secondary<br/>market & financing"]:::greenNode
+        S55["Step 5.5<br/>Calculate all-in<br/>hedging cost"]:::greenNode
+        D55{"Borrow confirmed?<br/>Cost viable?"}:::decisionNode
+        S56["Step 5.6<br/>Draft execution<br/>feasibility memo (1p)"]:::amberNode
+
+        DEP --> S51
+        DEP --> S52
+        DEP --> S53
+        DEP --> S54
+        S51 --> HO51
+        S51 --> S55
+        S52 --> S55
+        S53 --> S55
+        S54 --> S55
+        S55 --> D55
+        D55 -->|Yes| S56
+        D55 -->|No Borrow| VETO(["HARD VETO<br/>Trade Infeasible"]):::redNode
+        S56 --> OUT5(["Output: Multi-Prime Comparison<br/>All-In Cost, Feasibility Memo"]):::greenNode
+    end
+
+    classDef greenNode fill:#E8F5E9,stroke:#4CAF50,color:#1B5E20,stroke-width:2px
+    classDef amberNode fill:#FFF8E1,stroke:#FF9800,color:#E65100,stroke-width:2px
+    classDef redNode fill:#FFEBEE,stroke:#F44336,color:#B71C1C,stroke-width:2px
+    classDef decisionNode fill:#F3F4F6,stroke:#6B7280,color:#374151,stroke-width:2px
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <h3>Phase 10: Execution &amp; Post-Trade (7 steps — 0 Auto / 4 Asst / 3 Manual)</h3>
+      <div class="mermaid">
+graph TB
+    subgraph P10 ["Phase 10: Execution & Post-Trade — Execution/PB — Days 10-14"]
+        direction TB
+
+        DEP["Phase 9: IC Approves<br/>Position size & hedge params"]:::redNode
+
+        S101["Step 10.1<br/>Submit IOI<br/>to bookrunner"]:::redNode
+        S102["Step 10.2<br/>Track allocation &<br/>assess viability"]:::amberNode
+        D102{"Allocation sufficient?<br/>Economics still<br/>viable?"}:::decisionNode
+        S103["Step 10.3<br/>Post-pricing model<br/>recalibration"]:::amberNode
+        S104["Step 10.4<br/>Execute delta hedge"]:::redNode
+        S105["Step 10.5<br/>Settlement &<br/>ops booking"]:::redNode
+        S106["Step 10.6<br/>Activate post-trade<br/>monitoring"]:::amberNode
+        S107["Step 10.7<br/>Final document<br/>lock & archive"]:::amberNode
+
+        DEP --> S101
+        S101 --> S102
+        S102 --> D102
+        D102 -->|Yes| S103
+        D102 -->|No| ABORT(["ABORT: Economics<br/>no longer viable"]):::redNode
+        S103 --> S104
+        S104 --> S105
+        S105 --> S106
+        S106 --> S107
+        S107 --> OUT10(["Output: POSITION LIVE<br/>Monitoring Active<br/>Document Archived"]):::greenNode
+    end
+
+    classDef greenNode fill:#E8F5E9,stroke:#4CAF50,color:#1B5E20,stroke-width:2px
+    classDef amberNode fill:#FFF8E1,stroke:#FF9800,color:#E65100,stroke-width:2px
+    classDef redNode fill:#FFEBEE,stroke:#F44336,color:#B71C1C,stroke-width:2px
+    classDef decisionNode fill:#F3F4F6,stroke:#6B7280,color:#374151,stroke-width:2px
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== CAPABILITY SUMMARY ==================== -->
+  <div class="chart-section" id="summary">
+    <div class="section-header">
+      <h2>LLM Capability Summary by Step</h2>
+      <p>Consolidated view of all 63 workflow steps classified by LLM automation capability, aligned with Build Guide v1. Autonomous = LLM end-to-end; Assisted = LLM drafts, human reviews; Manual = human required.</p>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-box green-stat">
+        <h4>Autonomous (Green)</h4>
+        <div class="value">27 steps (43%)</div>
+        <div class="detail">Signal scanning, term extraction, screening filters, bond floor, Greeks, borrow data, credit comps, sensitivity heatmaps</div>
+      </div>
+      <div class="info-box amber-stat">
+        <h4>Assisted (Amber)</h4>
+        <div class="value">28 steps (44%)</div>
+        <div class="detail">Structure classification, T-F calibration, legal review, credit opinion, vol analysis, convergence, IC memo drafting</div>
+      </div>
+      <div class="info-box red-stat">
+        <h4>Manual (Red)</h4>
+        <div class="value">8 steps (13%)</div>
+        <div class="detail">0.5 Watchlist priority, 5.1 PB locate calls, 8.4 Convergence call, 9.7 Recommendation, 9.8 IC vote, 10.1 IOI, 10.4 Hedge exec, 10.5 Settlement</div>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <h3>Capability Distribution Across All 63 Steps</h3>
+      <div class="mermaid">
+pie title LLM Capability — 63 Steps
+    "Autonomous (27)" : 27
+    "Assisted (28)" : 28
+    "Manual (8)" : 8
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <h3>Phase-by-Phase Breakdown</h3>
+      <div class="mermaid">
+graph LR
+    subgraph Phase0 ["Phase 0: Pre-Launch Intel (5)"]
+        P0G["3 Autonomous"]:::greenNode
+        P0A["1 Assisted"]:::amberNode
+        P0R["1 Manual"]:::redNode
+    end
+
+    subgraph Phase1 ["Phase 1: Term Sheet (5)"]
+        P1G["3 Autonomous"]:::greenNode
+        P1A["2 Assisted"]:::amberNode
+    end
+
+    subgraph Phase2 ["Phase 2: Initial Screen (3)"]
+        P2G["2 Autonomous"]:::greenNode
+        P2A["1 Assisted"]:::amberNode
+    end
+
+    subgraph Phase3 ["Phase 3: Legal Review (7)"]
+        P3G["3 Autonomous"]:::greenNode
+        P3A["4 Assisted"]:::amberNode
+    end
+
+    subgraph Phase4 ["Phase 4: Valuation Model (8)"]
+        P4G["5 Autonomous"]:::greenNode
+        P4A["3 Assisted"]:::amberNode
+    end
+
+    subgraph Phase5 ["Phase 5: Borrow & Hedge (6)"]
+        P5G["4 Autonomous"]:::greenNode
+        P5A["1 Assisted"]:::amberNode
+        P5R["1 Manual"]:::redNode
+    end
+
+    subgraph Phase6 ["Phase 6: Credit (5)"]
+        P6G["3 Autonomous"]:::greenNode
+        P6A["2 Assisted"]:::amberNode
+    end
+
+    subgraph Phase7 ["Phase 7: Equity & Vol (5)"]
+        P7G["2 Autonomous"]:::greenNode
+        P7A["3 Assisted"]:::amberNode
+    end
+
+    subgraph Phase8 ["Phase 8: Convergence (4)"]
+        P8G["1 Autonomous"]:::greenNode
+        P8A["2 Assisted"]:::amberNode
+        P8R["1 Manual"]:::redNode
+    end
+
+    subgraph Phase9 ["Phase 9: IC Memo (8)"]
+        P9A["5 Assisted"]:::amberNode
+        P9G["1 Autonomous"]:::greenNode
+        P9R["2 Manual"]:::redNode
+    end
+
+    subgraph Phase10 ["Phase 10: Execution (7)"]
+        P10A["4 Assisted"]:::amberNode
+        P10R["3 Manual"]:::redNode
+    end
+
+    classDef greenNode fill:#E8F5E9,stroke:#4CAF50,color:#1B5E20,stroke-width:2px
+    classDef amberNode fill:#FFF8E1,stroke:#FF9800,color:#E65100,stroke-width:2px
+    classDef redNode fill:#FFEBEE,stroke:#F44336,color:#B71C1C,stroke-width:2px
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <h3>Team-Level Capability Distribution</h3>
+      <div class="mermaid">
+graph TD
+    T["6 Teams — 63 Steps"]:::decisionNode
+
+    T --> PM["PM / Trading Desk<br/>17 steps: 9 Auto / 6 Asst / 2 Man"]:::amberNode
+    T --> QA["Quantitative Analysis<br/>8 steps: 5 Auto / 3 Asst / 0 Man"]:::greenNode
+    T --> CR["Credit Analysis<br/>5 steps: 3 Auto / 2 Asst / 0 Man"]:::greenNode
+    T --> EQ["Equity Research<br/>5 steps: 2 Auto / 3 Asst / 0 Man"]:::amberNode
+    T --> LG["Legal / Compliance<br/>7 steps: 3 Auto / 4 Asst / 0 Man"]:::amberNode
+    T --> EX["Execution / PB<br/>13 steps: 4 Auto / 5 Asst / 4 Man"]:::redNode
+    T --> JT["PM + Quant (joint)<br/>8 steps: 1 Auto / 5 Asst / 2 Man"]:::amberNode
+
+    classDef greenNode fill:#E8F5E9,stroke:#4CAF50,color:#1B5E20,stroke-width:2px
+    classDef amberNode fill:#FFF8E1,stroke:#FF9800,color:#E65100,stroke-width:2px
+    classDef redNode fill:#FFEBEE,stroke:#F44336,color:#B71C1C,stroke-width:2px
+    classDef decisionNode fill:#F3F4F6,stroke:#6B7280,color:#374151,stroke-width:2px
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <h3>Highest-Impact Automation Opportunities</h3>
+      <div class="mermaid">
+graph TD
+    T["Top Automation Targets<br/>(Highest time savings)"]:::decisionNode
+
+    T --> A["Phase 4: Valuation & Arb Model<br/>5/8 autonomous<br/>2-4 days saveable"]:::greenNode
+    T --> B["Phase 0: Pre-Launch Intel<br/>3/5 autonomous<br/>2.5 days saveable (83%)"]:::greenNode
+    T --> C["Phase 1: Term Sheet<br/>3/5 autonomous<br/>0.4 days saveable (80%)"]:::greenNode
+
+    T --> D["Phase 3: Legal Review<br/>3/7 autonomous, 4 assisted<br/>2 days saveable (67%)"]:::amberNode
+    T --> E["Phase 6: Credit<br/>3/5 autonomous, 2 assisted<br/>1.3 days saveable (65%)"]:::amberNode
+    T --> F["Phase 5: Borrow & Hedge<br/>4/6 autonomous, 1 manual<br/>1 day saveable (67%)"]:::amberNode
+
+    T --> G["Phase 9: IC Memo<br/>1/8 autonomous, 5 assisted, 2 manual<br/>Judgment-heavy (60% saving)"]:::redNode
+    T --> H["Phase 10: Execution<br/>0/7 autonomous, 4 assisted, 3 manual<br/>Most manual phase (33% saving)"]:::redNode
+
+    classDef greenNode fill:#E8F5E9,stroke:#4CAF50,color:#1B5E20,stroke-width:2px
+    classDef amberNode fill:#FFF8E1,stroke:#FF9800,color:#E65100,stroke-width:2px
+    classDef redNode fill:#FFEBEE,stroke:#F44336,color:#B71C1C,stroke-width:2px
+    classDef decisionNode fill:#F3F4F6,stroke:#6B7280,color:#374151,stroke-width:2px
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <h3>The 8 Manual Steps — Where Human Expertise Is Non-Negotiable</h3>
+      <div class="mermaid">
+graph LR
+    subgraph MANUAL ["Manual Steps (Red) — 13% of workflow"]
+        direction TB
+        M1["Step 0.5<br/>Watchlist priority<br/><i>PM judgment to allocate<br/>team resources</i>"]:::redNode
+        M2["Step 5.1<br/>Multi-prime locate<br/><i>Direct phone/chat with<br/>PB stock loan desks</i>"]:::redNode
+        M3["Step 8.4<br/>Convergence call<br/><i>PM/CIO authority for<br/>deal conviction level</i>"]:::redNode
+        M4["Step 9.7<br/>Draft recommendation<br/><i>Go/no-go requires<br/>CIO investment authority</i>"]:::redNode
+        M5["Step 9.8<br/>IC presentation & vote<br/><i>Live presentation and<br/>formal committee vote</i>"]:::redNode
+        M6["Step 10.1<br/>Submit IOI<br/><i>Bookrunner negotiation<br/>requires direct engagement</i>"]:::redNode
+        M7["Step 10.4<br/>Execute delta hedge<br/><i>Real-time market execution<br/>requires human trader</i>"]:::redNode
+        M8["Step 10.5<br/>Settlement & ops<br/><i>Wire instructions and<br/>custodian coordination</i>"]:::redNode
+    end
+
+    classDef redNode fill:#FFEBEE,stroke:#F44336,color:#B71C1C,stroke-width:2px
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <h3>All 63 Steps — Full Classification Reference</h3>
+      <table class="summary-table">
+        <thead>
+          <tr><th>Step</th><th>Description</th><th>Team</th><th>LLM Level</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>0.1</td><td>Daily signal monitoring & scanning</td><td>PM/Trading</td><td class="llm-green">Autonomous</td></tr>
+          <tr><td>0.2</td><td>Preliminary credit & equity pre-screen</td><td>PM/Trading</td><td class="llm-green">Autonomous</td></tr>
+          <tr><td>0.3</td><td>Equity borrow pre-check</td><td>PM/Trading</td><td class="llm-green">Autonomous</td></tr>
+          <tr><td>0.4</td><td>Skeleton model on leaked/estimated terms</td><td>PM/Trading</td><td class="llm-amber">Assisted</td></tr>
+          <tr><td>0.5</td><td>Prioritize & assign to watchlist</td><td>PM/Trading</td><td class="llm-red">Manual</td></tr>
+          <tr><td>1.1</td><td>Extract full terms from term sheet</td><td>PM/Trading</td><td class="llm-green">Autonomous</td></tr>
+          <tr><td>1.2</td><td>Cross-reference vs Phase 0 intelligence</td><td>PM/Trading</td><td class="llm-green">Autonomous</td></tr>
+          <tr><td>1.3</td><td>Classify structure type & route modeling</td><td>PM/Trading</td><td class="llm-amber">Assisted</td></tr>
+          <tr><td>1.4</td><td>Compile comparable recent issuance</td><td>PM/Trading</td><td class="llm-green">Autonomous</td></tr>
+          <tr><td>1.5</td><td>Draft terms summary table</td><td>PM/Trading</td><td class="llm-amber">Assisted</td></tr>
+          <tr><td>2.1</td><td>Apply hard rejection filters</td><td>PM/Trading</td><td class="llm-green">Autonomous</td></tr>
+          <tr><td>2.2</td><td>Apply yellow flag filters</td><td>PM/Trading</td><td class="llm-green">Autonomous</td></tr>
+          <tr><td>2.3</td><td>Draft screening memo (1 page)</td><td>PM/Trading</td><td class="llm-amber">Assisted</td></tr>
+          <tr><td>3.1</td><td>Ingest full prospectus via RAG</td><td>Legal</td><td class="llm-green">Autonomous</td></tr>
+          <tr><td>3.2</td><td>Extract conversion mechanics</td><td>Legal</td><td class="llm-green">Autonomous</td></tr>
+          <tr><td>3.3</td><td>Extract anti-dilution, call/put provisions</td><td>Legal</td><td class="llm-green">Autonomous</td></tr>
+          <tr><td>3.4</td><td>Extract covenants & events of default</td><td>Legal</td><td class="llm-amber">Assisted</td></tr>
+          <tr><td>3.5</td><td>Identify all modeling implications</td><td>Legal</td><td class="llm-amber">Assisted</td></tr>
+          <tr><td>3.6</td><td>Compare to market standard language</td><td>Legal</td><td class="llm-amber">Assisted</td></tr>
+          <tr><td>3.7</td><td>Draft legal risk memo (R/Y/G flags)</td><td>Legal</td><td class="llm-amber">Assisted</td></tr>
+          <tr><td>4.1</td><td>Gather & validate market data inputs</td><td>Quant</td><td class="llm-green">Autonomous</td></tr>
+          <tr><td>4.2</td><td>Calculate bond floor</td><td>Quant</td><td class="llm-green">Autonomous</td></tr>
+          <tr><td>4.3</td><td>Build T-F binomial/trinomial tree (1000-step)</td><td>Quant</td><td class="llm-amber">Assisted</td></tr>
+          <tr><td>4.4</td><td>Compute Greeks via central differencing</td><td>Quant</td><td class="llm-green">Autonomous</td></tr>
+          <tr><td>4.5</td><td>Black-Scholes sanity check</td><td>Quant</td><td class="llm-green">Autonomous</td></tr>
+          <tr><td>4.6</td><td>Determine theoretical value & arb spread</td><td>Quant</td><td class="llm-green">Autonomous</td></tr>
+          <tr><td>4.7</td><td>Build 5x5 sensitivity heatmaps</td><td>Quant</td><td class="llm-green">Autonomous</td></tr>
+          <tr><td>4.8</td><td>Compile valuation model workbook</td><td>Quant</td><td class="llm-amber">Assisted</td></tr>
+          <tr><td>5.1</td><td>Submit multi-prime locate requests</td><td>Execution</td><td class="llm-red">Manual</td></tr>
+          <tr><td>5.2</td><td>Analyze historical borrow & recall data</td><td>Execution</td><td class="llm-green">Autonomous</td></tr>
+          <tr><td>5.3</td><td>Assess equity liquidity & options depth</td><td>Execution</td><td class="llm-green">Autonomous</td></tr>
+          <tr><td>5.4</td><td>Assess CB secondary market & financing</td><td>Execution</td><td class="llm-green">Autonomous</td></tr>
+          <tr><td>5.5</td><td>Calculate all-in hedging cost</td><td>Execution</td><td class="llm-green">Autonomous</td></tr>
+          <tr><td>5.6</td><td>Draft execution feasibility memo</td><td>Execution</td><td class="llm-amber">Assisted</td></tr>
+          <tr><td>6.1</td><td>Compile issuer financial profile</td><td>Credit</td><td class="llm-green">Autonomous</td></tr>
+          <tr><td>6.2</td><td>Comparable company credit analysis</td><td>Credit</td><td class="llm-green">Autonomous</td></tr>
+          <tr><td>6.3</td><td>Assess default probability & recovery</td><td>Credit</td><td class="llm-amber">Assisted</td></tr>
+          <tr><td>6.4</td><td>Evaluate credit interaction with arb</td><td>Credit</td><td class="llm-amber">Assisted</td></tr>
+          <tr><td>6.5</td><td>Draft credit opinion (1 page)</td><td>Credit</td><td class="llm-amber">Assisted</td></tr>
+          <tr><td>7.1</td><td>Fundamental equity valuation</td><td>Equity</td><td class="llm-green">Autonomous</td></tr>
+          <tr><td>7.2</td><td>Volatility analysis (IV vs RV)</td><td>Equity</td><td class="llm-amber">Assisted</td></tr>
+          <tr><td>7.3</td><td>Catalyst calendar & event risk</td><td>Equity</td><td class="llm-amber">Assisted</td></tr>
+          <tr><td>7.4</td><td>Parity path assessment</td><td>Equity</td><td class="llm-amber">Assisted</td></tr>
+          <tr><td>7.5</td><td>Draft equity & vol opinion (1 page)</td><td>Equity</td><td class="llm-amber">Assisted</td></tr>
+          <tr><td>8.1</td><td>Compile all workstream outputs</td><td>PM/Trading</td><td class="llm-green">Autonomous</td></tr>
+          <tr><td>8.2</td><td>Build convergence decision matrix</td><td>PM/Trading</td><td class="llm-amber">Assisted</td></tr>
+          <tr><td>8.3</td><td>Apply decision rules</td><td>PM/Trading</td><td class="llm-amber">Assisted</td></tr>
+          <tr><td>8.4</td><td>Draft convergence section</td><td>PM/Trading</td><td class="llm-red">Manual</td></tr>
+          <tr><td>9.1</td><td>Calculate expected return & target notional</td><td>PM+Quant</td><td class="llm-amber">Assisted</td></tr>
+          <tr><td>9.2</td><td>Design hedge plan</td><td>PM+Quant</td><td class="llm-amber">Assisted</td></tr>
+          <tr><td>9.3</td><td>Build scenario P&L table</td><td>PM+Quant</td><td class="llm-green">Autonomous</td></tr>
+          <tr><td>9.4</td><td>Assess tail risk & VaR contribution</td><td>PM+Quant</td><td class="llm-amber">Assisted</td></tr>
+          <tr><td>9.5</td><td>Compile IC memo quick-reference block</td><td>PM+Quant</td><td class="llm-amber">Assisted</td></tr>
+          <tr><td>9.6</td><td>Draft full IC memo sections 1-10</td><td>PM+Quant</td><td class="llm-amber">Assisted</td></tr>
+          <tr><td>9.7</td><td>Draft recommendation & conditions</td><td>PM+Quant</td><td class="llm-red">Manual</td></tr>
+          <tr><td>9.8</td><td>IC presentation & vote</td><td>PM+Quant</td><td class="llm-red">Manual</td></tr>
+          <tr><td>10.1</td><td>Submit IOI to bookrunner</td><td>Execution</td><td class="llm-red">Manual</td></tr>
+          <tr><td>10.2</td><td>Track allocation & assess viability</td><td>Execution</td><td class="llm-amber">Assisted</td></tr>
+          <tr><td>10.3</td><td>Post-pricing model recalibration</td><td>Execution</td><td class="llm-amber">Assisted</td></tr>
+          <tr><td>10.4</td><td>Execute delta hedge</td><td>Execution</td><td class="llm-red">Manual</td></tr>
+          <tr><td>10.5</td><td>Settlement & ops booking</td><td>Execution</td><td class="llm-red">Manual</td></tr>
+          <tr><td>10.6</td><td>Activate post-trade monitoring</td><td>Execution</td><td class="llm-amber">Assisted</td></tr>
+          <tr><td>10.7</td><td>Final document lock & archive</td><td>Execution</td><td class="llm-amber">Assisted</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <p>CB New Issue Workflow Charts v1.0 — Aligned with Build Guide v1, CB Source Document Reference Index &bull; February 2026</p>
+  <p>Autonomous 43% (27 steps) &bull; Assisted 44% (28 steps) &bull; Manual 13% (8 steps) &bull; 63 steps total &bull; 6 Teams &bull; 11 Phases</p>
+</div>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: false,
+    theme: 'base',
+    themeVariables: {
+      primaryColor: '#E8F5E9',
+      primaryTextColor: '#1B5E20',
+      primaryBorderColor: '#4CAF50',
+      lineColor: '#64748B',
+      secondaryColor: '#F1F5F9',
+      tertiaryColor: '#F8FAFC',
+      fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif',
+      fontSize: '13px',
+      nodeBorder: '2px',
+    },
+    flowchart: {
+      useMaxWidth: true,
+      htmlLabels: true,
+      curve: 'basis',
+      rankSpacing: 50,
+      nodeSpacing: 30,
+      padding: 15,
+    },
+  });
+
+  function showTab(tabId) {
+    document.querySelectorAll('.chart-section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+    event.currentTarget.classList.add('active');
+    renderMermaid(tabId);
+  }
+
+  const renderedTabs = new Set();
+
+  async function renderMermaid(tabId) {
+    if (renderedTabs.has(tabId)) return;
+    renderedTabs.add(tabId);
+
+    const section = document.getElementById(tabId);
+    const charts = section.querySelectorAll('.mermaid');
+
+    for (const chart of charts) {
+      if (chart.getAttribute('data-processed')) continue;
+      const id = 'mermaid-' + Math.random().toString(36).substr(2, 9);
+      try {
+        const { svg } = await mermaid.render(id, chart.textContent.trim());
+        chart.innerHTML = svg;
+        chart.setAttribute('data-processed', 'true');
+      } catch (e) {
+        console.error('Mermaid render error:', e);
+        chart.innerHTML = '<p style="color:red">Chart rendering error. Check console.</p>';
+      }
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    renderMermaid('overall');
+  });
+</script>
+
+</body>
+</html>
