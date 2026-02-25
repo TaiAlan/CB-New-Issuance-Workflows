@@ -85,9 +85,9 @@
       text-align: center;
       color: white;
     }
-    .gar-bar .gar-green { background: var(--green); flex: 43; }
-    .gar-bar .gar-amber { background: var(--amber); flex: 44; color: #1a1a1a; }
-    .gar-bar .gar-red { background: var(--red); flex: 13; }
+    .gar-bar .gar-green { background: var(--green); flex: 36; }
+    .gar-bar .gar-amber { background: var(--amber); flex: 53; color: #1a1a1a; }
+    .gar-bar .gar-red { background: var(--red); flex: 11; }
 
     .nav-container {
       background: white;
@@ -284,13 +284,13 @@
 <div class="header">
   <div class="version-badge">v1.0 — Aligned with Build Guide v1</div>
   <h1>CB New Issue Workflow Charts</h1>
-  <div class="subtitle">63 Steps &bull; 11 Phases &bull; 6 Teams &bull; 14 Handoffs &bull; 11 Decision Gates</div>
+  <div class="subtitle">74 Steps · 11 Phases · 6 Teams · 16 Handoffs · 11 Decision Gates</div>
   <div class="gar-bar">
-    <div class="gar-seg gar-green">Autonomous 43%</div>
-    <div class="gar-seg gar-amber">Assisted 44%</div>
-    <div class="gar-seg gar-red">Manual 13%</div>
+    <div class="gar-seg gar-green">Autonomous 36%</div>
+    <div class="gar-seg gar-amber">Assisted 53%</div>
+    <div class="gar-seg gar-red">Manual 11%</div>
   </div>
-  <p style="margin-top:0.4rem;">Green = Autonomous (27 steps) &bull; Amber = Assisted (28 steps) &bull; Red = Manual (8 steps) &bull; February 2026</p>
+  <p style="margin-top:0.4rem;">Green = Autonomous (27 steps) &bull; Amber = Assisted (39 steps) &bull; Red = Manual (8 steps) &bull; February 2026</p>
 </div>
 
 <div class="nav-container">
@@ -312,7 +312,7 @@
   <div class="chart-section active" id="overall">
     <div class="section-header">
       <h2>Master Build Sequence — LLM Capability Overlay</h2>
-      <p>Each phase is colour-coded by the predominant LLM capability level. Diamonds represent decision gates that require human judgment or quantitative threshold sign-off. 63 steps across 11 phases (0–10), 11 gates, 14 cross-team handoffs. Phases 0–2 are sequential (foundation). Phases 3–7 run in parallel. Phases 8–10 are integrative.</p>
+      <p>Each phase is colour-coded by the predominant LLM capability level. Diamonds represent decision gates that require human judgment or quantitative threshold sign-off. 74 steps across 11 phases (0–10), 11 gates, 16 cross-team handoffs. Phases 0–2 are sequential (foundation). Phases 3–7 run in parallel. Phases 8–10 are integrative.</p>
     </div>
 
     <div class="legend">
@@ -326,17 +326,17 @@
     <div class="info-grid">
       <div class="info-box green-stat">
         <h4>Autonomous</h4>
-        <div class="value">27 steps (43%)</div>
+        <div class="value">27 steps (36%)</div>
         <div class="detail">Signal scanning, term extraction, screening, bond floor, Greeks, borrow data, credit comps</div>
       </div>
       <div class="info-box amber-stat">
         <h4>Assisted</h4>
-        <div class="value">28 steps (44%)</div>
-        <div class="detail">Structure classification, legal review, T-F calibration, credit opinion, convergence, IC memo</div>
+        <div class="value">39 steps (53%)</div>
+        <div class="detail">Structure classification, feature deep-dives, strategy classification, legal review, T-F calibration, credit opinion, convergence, IC memo</div>
       </div>
       <div class="info-box red-stat">
         <h4>Manual</h4>
-        <div class="value">8 steps (13%)</div>
+        <div class="value">8 steps (11%)</div>
         <div class="detail">Watchlist priority, PB locate calls, convergence call, IC vote, hedge execution, settlement</div>
       </div>
     </div>
@@ -351,19 +351,19 @@ graph TD
         direction TB
         P0["Phase 0: Pre-Launch Intelligence<br/><b>3 Auto / 1 Asst / 1 Manual</b><br/>PM Trading — Day -7 to 0"]:::greenNode
         P0 --> G0{"Gate 0: Watchlist<br/>assigned? Team<br/>pre-allocated?"}:::decisionNode
-        G0 -->|Yes| P1["Phase 1: Term Sheet & Classification<br/><b>3 Auto / 2 Asst</b><br/>PM Trading — Day 0-1"]:::greenNode
+        G0 -->|Yes| P1["Phase 1: Term Sheet & Classification<br/><b>3 Auto / 3 Asst</b><br/>PM Trading — Day 0-1"]:::greenNode
         P1 --> G1{"Gate 1: Terms<br/>extracted? Structure<br/>classified?"}:::decisionNode
-        G1 -->|Yes| P2["Phase 2: Initial Screen & Gate #1<br/><b>2 Auto / 1 Asst</b><br/>PM Trading — Day 0-1"]:::greenNode
+        G1 -->|Yes| P2["Phase 2: Initial Screen & Gate #1<br/><b>2 Auto / 2 Asst</b><br/>PM Trading — Day 0-1"]:::greenNode
         P2 --> G2{"HARD GATE: Min size?<br/>Cheapness? Borrow?<br/>PASS / FAIL"}:::decisionNode
     end
 
     subgraph PARALLEL ["PARALLEL PHASES (Concurrent after Gate #1)"]
         direction TB
-        P3["Phase 3: Prospectus & Legal<br/><b>3 Auto / 4 Asst</b><br/>Legal — Days 1-5"]:::amberNode
-        P4["Phase 4: Valuation & Arb Model<br/><b>5 Auto / 3 Asst</b><br/>Quant — Days 1-5"]:::greenNode
+        P3["Phase 3: Prospectus & Legal<br/><b>4 Auto / 9 Asst</b><br/>Legal — Days 1-5"]:::redNode
+        P4["Phase 4: Valuation & Arb Model<br/><b>5 Auto / 4 Asst</b><br/>Quant — Days 1-5"]:::amberNode
         P5["Phase 5: Borrow & Hedging<br/><b>4 Auto / 1 Asst / 1 Man</b><br/>Execution — Days 1-3"]:::amberNode
         P6["Phase 6: Credit Assessment<br/><b>3 Auto / 2 Asst</b><br/>Credit — Days 3-7"]:::greenNode
-        P7["Phase 7: Equity & Vol<br/><b>2 Auto / 3 Asst</b><br/>Equity — Days 3-7"]:::amberNode
+        P7["Phase 7: Equity & Vol<br/><b>2 Auto / 4 Asst</b><br/>Equity — Days 3-7"]:::amberNode
     end
 
     G2 -->|Pass| P3
@@ -382,7 +382,7 @@ graph TD
         direction TB
         P8["Phase 8: Convergence & Synthesis<br/><b>1 Auto / 2 Asst / 1 Man</b><br/>PM Trading — Days 7-9"]:::amberNode
         P8 --> G8{"Gate 8: All dimensions<br/>converge? Deal<br/>conviction set?"}:::decisionNode
-        G8 -->|Yes| P9["Phase 9: Sizing, Risk & IC Memo<br/><b>1 Auto / 5 Asst / 2 Man</b><br/>PM+Quant — Days 7-12"]:::redNode
+        G8 -->|Yes| P9["Phase 9: Sizing, Risk & IC Memo<br/><b>1 Auto / 6 Asst / 2 Man</b><br/>PM+Quant — Days 7-12"]:::redNode
         P9 --> G9{"Gate 9: IC vote<br/>APPROVE / REJECT<br/>/ CONDITIONAL"}:::decisionNode
         G9 -->|Approved| P10["Phase 10: Execution & Post-Trade<br/><b>0 Auto / 4 Asst / 3 Man</b><br/>Execution — Days 10-14"]:::redNode
         P10 --> G10{"Gate 10: Settled?<br/>Monitoring active?<br/>Doc archived?"}:::decisionNode
@@ -408,7 +408,7 @@ graph TD
   <div class="chart-section" id="pm-trading">
     <div class="section-header">
       <h2>PM / Trading Desk <span class="team-badge pm">Phases 0, 1, 2, 8, 9</span></h2>
-      <p>Core orchestration team owning 17 steps directly plus 8 joint steps with Quant (Phase 9). Phases 0–2 are mostly autonomous (signal scanning, term extraction, screening). Phase 8 convergence requires PM judgment. Phase 9 IC memo is the most human-intensive phase.</p>
+      <p>Core orchestration team owning 19 steps directly plus 9 joint steps with Quant (Phase 9). Phases 0–2 are mostly autonomous (signal scanning, term extraction, screening). Phase 8 convergence requires PM judgment. Phase 9 IC memo is the most human-intensive phase.</p>
     </div>
 
     <div class="legend">
@@ -448,7 +448,7 @@ graph TB
     </div>
 
     <div class="chart-card">
-      <h3>Phase 1: Term Sheet Extraction &amp; Structure Classification (5 steps — 3 Auto / 2 Asst)</h3>
+      <h3>Phase 1: Term Sheet Extraction &amp; Structure Classification (6 steps — 3 Auto / 3 Asst)</h3>
       <div class="mermaid">
 graph TB
     subgraph P1 ["Phase 1: Term Sheet & Classification — PM/Trading — Day 0-1"]
@@ -459,6 +459,7 @@ graph TB
         S13["Step 1.3<br/>Classify structure type<br/>& route modeling branch"]:::amberNode
         S14["Step 1.4<br/>Compile comparable<br/>recent issuance"]:::greenNode
         S15["Step 1.5<br/>Draft terms summary table"]:::amberNode
+        S16["Step 1.6<br/>Build feature inventory<br/>& decision tree"]:::amberNode
 
         S11 --> S12
         S11 --> S13
@@ -466,7 +467,8 @@ graph TB
         S12 --> S15
         S13 --> S15
         S14 --> S15
-        S15 --> OUT1(["Output: Structured Term Sheet<br/>Structure Classification<br/>Comparables Table"]):::greenNode
+        S15 --> S16
+        S16 --> OUT1(["Output: Structured Term Sheet<br/>Structure Classification<br/>Feature Inventory Checklist<br/>Comparables Table"]):::greenNode
     end
 
     classDef greenNode fill:#E8F5E9,stroke:#4CAF50,color:#1B5E20,stroke-width:2px
@@ -477,7 +479,7 @@ graph TB
     </div>
 
     <div class="chart-card">
-      <h3>Phase 2: Initial Screen &amp; Gate #1 (3 steps — 2 Auto / 1 Asst)</h3>
+      <h3>Phase 2: Initial Screen &amp; Gate #1 (4 steps — 2 Auto / 2 Asst)</h3>
       <div class="mermaid">
 graph TB
     subgraph P2 ["Phase 2: Initial Screen & Gate #1 — PM/Trading — Day 0-1"]
@@ -489,6 +491,7 @@ graph TB
         S22["Step 2.2<br/>Apply yellow flag filters<br/>(borrow, structure, vol)"]:::greenNode
         D22{"HARD GATE<br/>Pass / Fail?"}:::decisionNode
         S23["Step 2.3<br/>Draft screening memo<br/>(1 page)"]:::amberNode
+        S24["Step 2.4<br/>Classify primary<br/>arb strategy"]:::amberNode
 
         DEP --> S21
         DEP --> S22
@@ -496,7 +499,8 @@ graph TB
         S22 --> D22
         D22 -->|Pass| S23
         D22 -->|Fail| KILL(["DEAL KILLED<br/>Archive & Log"]):::redNode
-        S23 --> OUT2(["Output: Screening Memo<br/>GO for Parallel Phases"]):::greenNode
+        S23 --> S24
+        S24 --> OUT2(["Output: Screening Memo<br/>Strategy Classification<br/>GO for Parallel Phases"]):::greenNode
     end
 
     classDef greenNode fill:#E8F5E9,stroke:#4CAF50,color:#1B5E20,stroke-width:2px
@@ -543,7 +547,7 @@ graph TB
     </div>
 
     <div class="chart-card">
-      <h3>Phase 9: Sizing, Risk &amp; IC Memo (8 steps — 1 Auto / 5 Asst / 2 Manual) <span class="team-badge pm">PM</span> <span class="team-badge quant">+ Quant</span></h3>
+      <h3>Phase 9: Sizing, Risk &amp; IC Memo (9 steps — 1 Auto / 6 Asst / 2 Manual) <span class="team-badge pm">PM</span> <span class="team-badge quant">+ Quant</span></h3>
       <div class="mermaid">
 graph TB
     subgraph P9 ["Phase 9: Sizing, Risk & IC Memo — PM + Quant Joint — Days 7-12"]
@@ -561,9 +565,13 @@ graph TB
         D97{"PM/CIO<br/>sign-off on<br/>recommendation?"}:::decisionNode
         S98["Step 9.8<br/>IC presentation & vote"]:::redNode
 
+        S91a["Step 9.1a<br/>Strategy-specific sizing<br/>& hedge overlay"]:::amberNode
+
         DEP --> S91
-        DEP --> S92
+        DEP --> S91a
         S91 --> S93
+        S91a --> S93
+        DEP --> S92
         S92 --> S93
         S93 --> S94
         S94 --> S95
@@ -586,7 +594,7 @@ graph TB
   <div class="chart-section" id="quant">
     <div class="section-header">
       <h2>Quantitative Analysis <span class="team-badge quant">Phase 4</span></h2>
-      <p>Phase 4 is the most automatable analytical phase (5 of 8 steps autonomous). Bond floor, Greeks, Black-Scholes check, and sensitivity heatmaps are fully autonomous. T-F tree calibration and workbook compilation are assisted. Also contributes jointly to Phase 9.</p>
+      <p>Phase 4 is the most automatable analytical phase (5 of 9 steps autonomous). Bond floor, Greeks, Black-Scholes check, and sensitivity heatmaps are fully autonomous. T-F tree calibration with feature-specific nodes and workbook compilation are assisted. Also contributes jointly to Phase 9.</p>
     </div>
 
     <div class="legend">
@@ -598,7 +606,7 @@ graph TB
     </div>
 
     <div class="chart-card">
-      <h3>Phase 4: Valuation &amp; Arb Modeling (8 steps — 5 Auto / 3 Asst)</h3>
+      <h3>Phase 4: Valuation &amp; Arb Modeling (9 steps — 5 Auto / 4 Asst)</h3>
       <div class="mermaid">
 graph TB
     subgraph P4 ["Phase 4: Valuation & Arb Modeling — Quant Analysis — Days 1-5"]
@@ -610,7 +618,8 @@ graph TB
 
         S41["Step 4.1<br/>Gather & validate<br/>market data inputs"]:::greenNode
         S42["Step 4.2<br/>Calculate bond floor<br/>(credit-only value)"]:::greenNode
-        S43["Step 4.3<br/>Build T-F binomial/<br/>trinomial tree (1000-step)"]:::amberNode
+        S43["Step 4.3<br/>Build T-F binomial/<br/>trinomial tree"]:::amberNode
+        S43a["Step 4.3a<br/>Configure feature-specific<br/>tree nodes"]:::amberNode
         S44["Step 4.4<br/>Compute Greeks via<br/>central differencing"]:::greenNode
         S45["Step 4.5<br/>Black-Scholes<br/>sanity check"]:::greenNode
         D45{"TV within 2pts<br/>of B-S? If not,<br/>justify deviation"}:::decisionNode
@@ -620,11 +629,13 @@ graph TB
 
         DEP1 --> S41
         DEP2 --> S43
+        DEP2 --> S43a
         DEP3 --> S43
         S41 --> S42
         S41 --> S43
         S42 --> S43
-        S43 --> S44
+        S43 --> S43a
+        S43a --> S44
         S43 --> S45
         S44 --> S46
         S45 --> D45
@@ -696,7 +707,7 @@ graph TB
   <div class="chart-section" id="equity">
     <div class="section-header">
       <h2>Equity Research <span class="team-badge equity">Phase 7</span></h2>
-      <p>Phase 7 has 5 steps: 2 autonomous (fundamental valuation, parity path quantitative work) and 3 assisted (volatility analysis, catalyst calendar, equity opinion synthesis). Requires sector expertise and vol trading experience for meaningful output.</p>
+      <p>Phase 7 has 6 steps: 2 autonomous (fundamental valuation, parity path quantitative work) and 4 assisted (volatility analysis, catalyst calendar, takeover probability, equity opinion synthesis). Requires sector expertise and vol trading experience for meaningful output.</p>
     </div>
 
     <div class="legend">
@@ -708,7 +719,7 @@ graph TB
     </div>
 
     <div class="chart-card">
-      <h3>Phase 7: Equity &amp; Volatility Assessment (5 steps — 2 Auto / 3 Asst)</h3>
+      <h3>Phase 7: Equity &amp; Volatility Assessment (6 steps — 2 Auto / 4 Asst)</h3>
       <div class="mermaid">
 graph TB
     subgraph P7 ["Phase 7: Equity & Vol Assessment — Equity Research — Days 3-7"]
@@ -721,7 +732,8 @@ graph TB
         S73["Step 7.3<br/>Catalyst calendar<br/>& event risk"]:::amberNode
         S74["Step 7.4<br/>Parity path assessment<br/>(stock trajectory vs CP)"]:::amberNode
         D74{"Equity view<br/>supports arb<br/>thesis?"}:::decisionNode
-        S75["Step 7.5<br/>Draft equity & vol<br/>opinion (1 page)"]:::amberNode
+        S75["Step 7.5<br/>Draft equity & vol<br/>opinion"]:::amberNode
+        S76["Step 7.6<br/>Takeover & M&A<br/>probability assessment"]:::amberNode
 
         DEP --> S71
         DEP --> S72
@@ -731,7 +743,9 @@ graph TB
         S73 --> S74
         S74 --> D74
         D74 -->|Yes| S75
-        S75 --> OUT7(["Output: Equity Opinion<br/>Vol Outlook, Catalyst Calendar<br/>Parity Path View"]):::amberNode
+        D74 -->|Yes| S76
+        S75 --> OUT7(["Output: Equity Opinion<br/>Vol Outlook, Catalyst Calendar<br/>Takeover Probability<br/>Parity Path View"]):::amberNode
+        S76 --> OUT7
     end
 
     classDef greenNode fill:#E8F5E9,stroke:#4CAF50,color:#1B5E20,stroke-width:2px
@@ -746,7 +760,7 @@ graph TB
   <div class="chart-section" id="legal">
     <div class="section-header">
       <h2>Legal / Compliance <span class="team-badge legal">Phase 3</span></h2>
-      <p>Phase 3 has 7 steps: 3 autonomous (prospectus RAG ingest, conversion mechanics extraction, anti-dilution/call/put extraction) and 4 assisted (covenant interpretation, modeling implications, market standard comparison, legal risk memo). Critical handoff to Quant at Step 3.5 for modeling parameters.</p>
+      <p>Phase 3 has 13 steps: 4 autonomous (prospectus RAG ingest, conversion mechanics, anti-dilution/call/put, feature routing) and 9 assisted (feature deep-dives: soft calls, puts, CoCos, resets, dividends, plus modeling implications, market standard comparison, legal risk memo). Critical handoff to Quant at Step 3.11 for modeling parameters.</p>
     </div>
 
     <div class="legend">
@@ -758,7 +772,7 @@ graph TB
     </div>
 
     <div class="chart-card">
-      <h3>Phase 3: Prospectus &amp; Legal Review (7 steps — 3 Auto / 4 Asst)</h3>
+      <h3>Phase 3: Prospectus &amp; Legal Analysis (13 steps — 4 Auto / 9 Asst)</h3>
       <div class="mermaid">
 graph TB
     subgraph P3 ["Phase 3: Prospectus & Legal Review — Legal/Compliance — Days 1-5"]
@@ -767,13 +781,19 @@ graph TB
         DEP["Phase 2: Screening passed<br/>Prospectus received"]:::greenNode
 
         S31["Step 3.1<br/>Ingest full prospectus<br/>via RAG"]:::greenNode
-        S32["Step 3.2<br/>Extract & analyze<br/>conversion mechanics"]:::greenNode
+        S32["Step 3.2<br/>Extract conversion<br/>mechanics"]:::greenNode
         S33["Step 3.3<br/>Extract anti-dilution,<br/>call/put provisions"]:::greenNode
-        S34["Step 3.4<br/>Extract covenants,<br/>events of default"]:::amberNode
-        S35["Step 3.5<br/>Identify all modeling<br/>implications"]:::amberNode
-        HO35(["HANDOFF to Quant<br/>Modeling parameters"]):::greenNode
-        S36["Step 3.6<br/>Compare to market<br/>standard language"]:::amberNode
-        S37["Step 3.7<br/>Draft legal risk memo<br/>(2-3 pages, R/Y/G flags)"]:::amberNode
+        S34["Step 3.4<br/>Extract covenants &<br/>events of default"]:::amberNode
+        S35["Step 3.5<br/>Feature decision tree<br/>& analysis routing"]:::greenNode
+        S36["Step 3.6<br/>Soft call / provisional<br/>call analysis"]:::amberNode
+        S37["Step 3.7<br/>Put schedule &<br/>optimization analysis"]:::amberNode
+        S38["Step 3.8<br/>CoCo / contingent<br/>conversion analysis"]:::amberNode
+        S39["Step 3.9<br/>Reset mechanics &<br/>floor analysis"]:::amberNode
+        S310["Step 3.10<br/>Dividend protection,<br/>co-pay & CoC analysis"]:::amberNode
+        S311["Step 3.11<br/>Identify all modeling<br/>implications"]:::amberNode
+        HO311(["HANDOFF to Quant<br/>Modeling parameters"]):::amberNode
+        S312["Step 3.12<br/>Compare to market<br/>standard language"]:::amberNode
+        S313["Step 3.13<br/>Draft legal risk memo<br/>(R/Y/G flags)"]:::amberNode
 
         DEP --> S31
         S31 --> S32
@@ -782,11 +802,21 @@ graph TB
         S32 --> S35
         S33 --> S35
         S34 --> S35
-        S35 --> HO35
-        S34 --> S36
-        S36 --> S37
+        S35 --> S36
         S35 --> S37
-        S37 --> OUT3(["Output: Legal Risk Memo<br/>R/Y/G Flags<br/>Modeling Parameters"]):::amberNode
+        S35 --> S38
+        S35 --> S39
+        S35 --> S310
+        S36 --> S311
+        S37 --> S311
+        S38 --> S311
+        S39 --> S311
+        S310 --> S311
+        S311 --> HO311
+        S34 --> S312
+        S312 --> S313
+        S311 --> S313
+        S313 --> OUT3(["Output: Legal Risk Memo<br/>R/Y/G Flags<br/>Modeling Parameters"]):::amberNode
     end
 
     classDef greenNode fill:#E8F5E9,stroke:#4CAF50,color:#1B5E20,stroke-width:2px
@@ -894,33 +924,33 @@ graph TB
   <div class="chart-section" id="summary">
     <div class="section-header">
       <h2>LLM Capability Summary by Step</h2>
-      <p>Consolidated view of all 63 workflow steps classified by LLM automation capability, aligned with Build Guide v1. Autonomous = LLM end-to-end; Assisted = LLM drafts, human reviews; Manual = human required.</p>
+      <p>Consolidated view of all 74 workflow steps classified by LLM automation capability, aligned with Build Guide v2. Autonomous = LLM end-to-end; Assisted = LLM drafts, human reviews; Manual = human required.</p>
     </div>
 
     <div class="info-grid">
       <div class="info-box green-stat">
         <h4>Autonomous (Green)</h4>
-        <div class="value">27 steps (43%)</div>
+        <div class="value">27 steps (36%)</div>
         <div class="detail">Signal scanning, term extraction, screening filters, bond floor, Greeks, borrow data, credit comps, sensitivity heatmaps</div>
       </div>
       <div class="info-box amber-stat">
         <h4>Assisted (Amber)</h4>
-        <div class="value">28 steps (44%)</div>
-        <div class="detail">Structure classification, T-F calibration, legal review, credit opinion, vol analysis, convergence, IC memo drafting</div>
+        <div class="value">39 steps (53%)</div>
+        <div class="detail">Structure classification, feature deep-dives, strategy classification, T-F calibration, legal review, credit opinion, vol analysis, convergence, IC memo drafting</div>
       </div>
       <div class="info-box red-stat">
         <h4>Manual (Red)</h4>
-        <div class="value">8 steps (13%)</div>
+        <div class="value">8 steps (11%)</div>
         <div class="detail">0.5 Watchlist priority, 5.1 PB locate calls, 8.4 Convergence call, 9.7 Recommendation, 9.8 IC vote, 10.1 IOI, 10.4 Hedge exec, 10.5 Settlement</div>
       </div>
     </div>
 
     <div class="chart-card">
-      <h3>Capability Distribution Across All 63 Steps</h3>
+      <h3>Capability Distribution Across All 74 Steps</h3>
       <div class="mermaid">
-pie title LLM Capability — 63 Steps
+pie title LLM Capability — 74 Steps
     "Autonomous (27)" : 27
-    "Assisted (28)" : 28
+    "Assisted (39)" : 39
     "Manual (8)" : 8
       </div>
     </div>
@@ -935,24 +965,24 @@ graph LR
         P0R["1 Manual"]:::redNode
     end
 
-    subgraph Phase1 ["Phase 1: Term Sheet (5)"]
+    subgraph Phase1 ["Phase 1: Term Sheet (6)"]
         P1G["3 Autonomous"]:::greenNode
-        P1A["2 Assisted"]:::amberNode
+        P1A["3 Assisted"]:::amberNode
     end
 
-    subgraph Phase2 ["Phase 2: Initial Screen (3)"]
+    subgraph Phase2 ["Phase 2: Initial Screen (4)"]
         P2G["2 Autonomous"]:::greenNode
-        P2A["1 Assisted"]:::amberNode
+        P2A["2 Assisted"]:::amberNode
     end
 
-    subgraph Phase3 ["Phase 3: Legal Review (7)"]
-        P3G["3 Autonomous"]:::greenNode
-        P3A["4 Assisted"]:::amberNode
+    subgraph Phase3 ["Phase 3: Legal Analysis (13)"]
+        P3G["4 Autonomous"]:::greenNode
+        P3A["9 Assisted"]:::amberNode
     end
 
-    subgraph Phase4 ["Phase 4: Valuation Model (8)"]
+    subgraph Phase4 ["Phase 4: Valuation Model (9)"]
         P4G["5 Autonomous"]:::greenNode
-        P4A["3 Assisted"]:::amberNode
+        P4A["4 Assisted"]:::amberNode
     end
 
     subgraph Phase5 ["Phase 5: Borrow & Hedge (6)"]
@@ -966,9 +996,9 @@ graph LR
         P6A["2 Assisted"]:::amberNode
     end
 
-    subgraph Phase7 ["Phase 7: Equity & Vol (5)"]
+    subgraph Phase7 ["Phase 7: Equity & Vol (6)"]
         P7G["2 Autonomous"]:::greenNode
-        P7A["3 Assisted"]:::amberNode
+        P7A["4 Assisted"]:::amberNode
     end
 
     subgraph Phase8 ["Phase 8: Convergence (4)"]
@@ -977,8 +1007,8 @@ graph LR
         P8R["1 Manual"]:::redNode
     end
 
-    subgraph Phase9 ["Phase 9: IC Memo (8)"]
-        P9A["5 Assisted"]:::amberNode
+    subgraph Phase9 ["Phase 9: IC Memo (9)"]
+        P9A["6 Assisted"]:::amberNode
         P9G["1 Autonomous"]:::greenNode
         P9R["2 Manual"]:::redNode
     end
@@ -998,15 +1028,15 @@ graph LR
       <h3>Team-Level Capability Distribution</h3>
       <div class="mermaid">
 graph TD
-    T["6 Teams — 63 Steps"]:::decisionNode
+    T["6 Teams — 74 Steps"]:::decisionNode
 
-    T --> PM["PM / Trading Desk<br/>17 steps: 9 Auto / 6 Asst / 2 Man"]:::amberNode
-    T --> QA["Quantitative Analysis<br/>8 steps: 5 Auto / 3 Asst / 0 Man"]:::greenNode
+    T --> PM["PM / Trading Desk<br/>19 steps: 9 Auto / 8 Asst / 2 Man"]:::amberNode
+    T --> QA["Quantitative Analysis<br/>9 steps: 5 Auto / 4 Asst / 0 Man"]:::greenNode
     T --> CR["Credit Analysis<br/>5 steps: 3 Auto / 2 Asst / 0 Man"]:::greenNode
-    T --> EQ["Equity Research<br/>5 steps: 2 Auto / 3 Asst / 0 Man"]:::amberNode
-    T --> LG["Legal / Compliance<br/>7 steps: 3 Auto / 4 Asst / 0 Man"]:::amberNode
+    T --> EQ["Equity Research<br/>6 steps: 2 Auto / 4 Asst / 0 Man"]:::amberNode
+    T --> LG["Legal / Compliance<br/>13 steps: 4 Auto / 9 Asst / 0 Man"]:::redNode
     T --> EX["Execution / PB<br/>13 steps: 4 Auto / 5 Asst / 4 Man"]:::redNode
-    T --> JT["PM + Quant (joint)<br/>8 steps: 1 Auto / 5 Asst / 2 Man"]:::amberNode
+    T --> JT["PM + Quant (joint)<br/>9 steps: 1 Auto / 6 Asst / 2 Man"]:::amberNode
 
     classDef greenNode fill:#E8F5E9,stroke:#4CAF50,color:#1B5E20,stroke-width:2px
     classDef amberNode fill:#FFF8E1,stroke:#FF9800,color:#E65100,stroke-width:2px
@@ -1021,11 +1051,11 @@ graph TD
 graph TD
     T["Top Automation Targets<br/>(Highest time savings)"]:::decisionNode
 
-    T --> A["Phase 4: Valuation & Arb Model<br/>5/8 autonomous<br/>2-4 days saveable"]:::greenNode
+    T --> A["Phase 4: Valuation & Arb Model<br/>5/9 autonomous<br/>2-4 days saveable"]:::amberNode
     T --> B["Phase 0: Pre-Launch Intel<br/>3/5 autonomous<br/>2.5 days saveable (83%)"]:::greenNode
     T --> C["Phase 1: Term Sheet<br/>3/5 autonomous<br/>0.4 days saveable (80%)"]:::greenNode
 
-    T --> D["Phase 3: Legal Review<br/>3/7 autonomous, 4 assisted<br/>2 days saveable (67%)"]:::amberNode
+    T --> D["Phase 3: Legal Analysis<br/>4/13 autonomous, 9 assisted<br/>3 days saveable (50%)"]:::redNode
     T --> E["Phase 6: Credit<br/>3/5 autonomous, 2 assisted<br/>1.3 days saveable (65%)"]:::amberNode
     T --> F["Phase 5: Borrow & Hedge<br/>4/6 autonomous, 1 manual<br/>1 day saveable (67%)"]:::amberNode
 
@@ -1060,7 +1090,7 @@ graph LR
     </div>
 
     <div class="chart-card">
-      <h3>All 63 Steps — Full Classification Reference</h3>
+      <h3>All 74 Steps — Full Classification Reference</h3>
       <table class="summary-table">
         <thead>
           <tr><th>Step</th><th>Description</th><th>Team</th><th>LLM Level</th></tr>
@@ -1076,19 +1106,28 @@ graph LR
           <tr><td>1.3</td><td>Classify structure type & route modeling</td><td>PM/Trading</td><td class="llm-amber">Assisted</td></tr>
           <tr><td>1.4</td><td>Compile comparable recent issuance</td><td>PM/Trading</td><td class="llm-green">Autonomous</td></tr>
           <tr><td>1.5</td><td>Draft terms summary table</td><td>PM/Trading</td><td class="llm-amber">Assisted</td></tr>
+          <tr><td>1.6</td><td>Build feature inventory & decision tree</td><td>PM/Trading</td><td class="llm-amber">Assisted</td></tr>
           <tr><td>2.1</td><td>Apply hard rejection filters</td><td>PM/Trading</td><td class="llm-green">Autonomous</td></tr>
           <tr><td>2.2</td><td>Apply yellow flag filters</td><td>PM/Trading</td><td class="llm-green">Autonomous</td></tr>
           <tr><td>2.3</td><td>Draft screening memo (1 page)</td><td>PM/Trading</td><td class="llm-amber">Assisted</td></tr>
+          <tr><td>2.4</td><td>Classify primary arb strategy</td><td>PM/Trading</td><td class="llm-amber">Assisted</td></tr>
           <tr><td>3.1</td><td>Ingest full prospectus via RAG</td><td>Legal</td><td class="llm-green">Autonomous</td></tr>
           <tr><td>3.2</td><td>Extract conversion mechanics</td><td>Legal</td><td class="llm-green">Autonomous</td></tr>
           <tr><td>3.3</td><td>Extract anti-dilution, call/put provisions</td><td>Legal</td><td class="llm-green">Autonomous</td></tr>
           <tr><td>3.4</td><td>Extract covenants & events of default</td><td>Legal</td><td class="llm-amber">Assisted</td></tr>
-          <tr><td>3.5</td><td>Identify all modeling implications</td><td>Legal</td><td class="llm-amber">Assisted</td></tr>
-          <tr><td>3.6</td><td>Compare to market standard language</td><td>Legal</td><td class="llm-amber">Assisted</td></tr>
-          <tr><td>3.7</td><td>Draft legal risk memo (R/Y/G flags)</td><td>Legal</td><td class="llm-amber">Assisted</td></tr>
+          <tr><td>3.5</td><td>Feature decision tree & analysis routing</td><td>Legal</td><td class="llm-green">Autonomous</td></tr>
+          <tr><td>3.6</td><td>Soft call / provisional call analysis</td><td>Legal</td><td class="llm-amber">Assisted</td></tr>
+          <tr><td>3.7</td><td>Put schedule & optimization analysis</td><td>Legal</td><td class="llm-amber">Assisted</td></tr>
+          <tr><td>3.8</td><td>CoCo / contingent conversion analysis</td><td>Legal</td><td class="llm-amber">Assisted</td></tr>
+          <tr><td>3.9</td><td>Reset mechanics & floor analysis</td><td>Legal</td><td class="llm-amber">Assisted</td></tr>
+          <tr><td>3.10</td><td>Dividend protection, co-pay & CoC analysis</td><td>Legal</td><td class="llm-amber">Assisted</td></tr>
+          <tr><td>3.11</td><td>Identify all modeling implications</td><td>Legal</td><td class="llm-amber">Assisted</td></tr>
+          <tr><td>3.12</td><td>Compare to market standard language</td><td>Legal</td><td class="llm-amber">Assisted</td></tr>
+          <tr><td>3.13</td><td>Draft legal risk memo (R/Y/G flags)</td><td>Legal</td><td class="llm-amber">Assisted</td></tr>
           <tr><td>4.1</td><td>Gather & validate market data inputs</td><td>Quant</td><td class="llm-green">Autonomous</td></tr>
           <tr><td>4.2</td><td>Calculate bond floor</td><td>Quant</td><td class="llm-green">Autonomous</td></tr>
-          <tr><td>4.3</td><td>Build T-F binomial/trinomial tree (1000-step)</td><td>Quant</td><td class="llm-amber">Assisted</td></tr>
+          <tr><td>4.3</td><td>Build T-F binomial/trinomial tree</td><td>Quant</td><td class="llm-amber">Assisted</td></tr>
+          <tr><td>4.3a</td><td>Configure feature-specific tree nodes</td><td>Quant</td><td class="llm-amber">Assisted</td></tr>
           <tr><td>4.4</td><td>Compute Greeks via central differencing</td><td>Quant</td><td class="llm-green">Autonomous</td></tr>
           <tr><td>4.5</td><td>Black-Scholes sanity check</td><td>Quant</td><td class="llm-green">Autonomous</td></tr>
           <tr><td>4.6</td><td>Determine theoretical value & arb spread</td><td>Quant</td><td class="llm-green">Autonomous</td></tr>
@@ -1104,17 +1143,19 @@ graph LR
           <tr><td>6.2</td><td>Comparable company credit analysis</td><td>Credit</td><td class="llm-green">Autonomous</td></tr>
           <tr><td>6.3</td><td>Assess default probability & recovery</td><td>Credit</td><td class="llm-amber">Assisted</td></tr>
           <tr><td>6.4</td><td>Evaluate credit interaction with arb</td><td>Credit</td><td class="llm-amber">Assisted</td></tr>
-          <tr><td>6.5</td><td>Draft credit opinion (1 page)</td><td>Credit</td><td class="llm-amber">Assisted</td></tr>
+          <tr><td>6.5</td><td>Draft credit opinion</td><td>Credit</td><td class="llm-amber">Assisted</td></tr>
           <tr><td>7.1</td><td>Fundamental equity valuation</td><td>Equity</td><td class="llm-green">Autonomous</td></tr>
           <tr><td>7.2</td><td>Volatility analysis (IV vs RV)</td><td>Equity</td><td class="llm-amber">Assisted</td></tr>
           <tr><td>7.3</td><td>Catalyst calendar & event risk</td><td>Equity</td><td class="llm-amber">Assisted</td></tr>
           <tr><td>7.4</td><td>Parity path assessment</td><td>Equity</td><td class="llm-amber">Assisted</td></tr>
-          <tr><td>7.5</td><td>Draft equity & vol opinion (1 page)</td><td>Equity</td><td class="llm-amber">Assisted</td></tr>
+          <tr><td>7.5</td><td>Draft equity & vol opinion</td><td>Equity</td><td class="llm-amber">Assisted</td></tr>
+          <tr><td>7.6</td><td>Takeover & M&A probability assessment</td><td>Equity</td><td class="llm-amber">Assisted</td></tr>
           <tr><td>8.1</td><td>Compile all workstream outputs</td><td>PM/Trading</td><td class="llm-green">Autonomous</td></tr>
           <tr><td>8.2</td><td>Build convergence decision matrix</td><td>PM/Trading</td><td class="llm-amber">Assisted</td></tr>
           <tr><td>8.3</td><td>Apply decision rules</td><td>PM/Trading</td><td class="llm-amber">Assisted</td></tr>
           <tr><td>8.4</td><td>Draft convergence section</td><td>PM/Trading</td><td class="llm-red">Manual</td></tr>
           <tr><td>9.1</td><td>Calculate expected return & target notional</td><td>PM+Quant</td><td class="llm-amber">Assisted</td></tr>
+          <tr><td>9.1a</td><td>Strategy-specific sizing & hedge overlay</td><td>PM+Quant</td><td class="llm-amber">Assisted</td></tr>
           <tr><td>9.2</td><td>Design hedge plan</td><td>PM+Quant</td><td class="llm-amber">Assisted</td></tr>
           <tr><td>9.3</td><td>Build scenario P&L table</td><td>PM+Quant</td><td class="llm-green">Autonomous</td></tr>
           <tr><td>9.4</td><td>Assess tail risk & VaR contribution</td><td>PM+Quant</td><td class="llm-amber">Assisted</td></tr>
@@ -1137,8 +1178,8 @@ graph LR
 </div>
 
 <div class="footer">
-  <p>CB New Issue Workflow Charts v1.0 — Aligned with Build Guide v1, CB Source Document Reference Index &bull; February 2026</p>
-  <p>Autonomous 43% (27 steps) &bull; Assisted 44% (28 steps) &bull; Manual 13% (8 steps) &bull; 63 steps total &bull; 6 Teams &bull; 11 Phases</p>
+  <p>CB New Issue Workflow Charts v2.0 — Aligned with Build Guide v2, CB Source Document Reference Index · February 2026</p>
+  <p>Autonomous 36% (27 steps) · Assisted 53% (39 steps) · Manual 11% (8 steps) · 74 steps total · 6 Teams · 11 Phases</p>
 </div>
 
 <script>
